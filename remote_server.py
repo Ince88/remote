@@ -12,6 +12,22 @@ import win32con
 import ctypes
 from ctypes import wintypes
 import win32gui
+import sys
+import subprocess
+
+REQUIRED_PACKAGES = ["keyboard", "pyautogui", "pywin32"]
+
+# Function to install missing packages
+def install_packages():
+    for package in REQUIRED_PACKAGES:
+        try:
+            __import__(package)
+        except ImportError:
+            print(f"Installing missing package: {package}")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Ensure all required packages are installed before proceeding
+install_packages()
 
 # Check if running as administrator
 def is_admin():
