@@ -62,21 +62,22 @@ echo Installing required packages...
 :: Create program directory
 if not exist "%USERPROFILE%\Remote Control Server" mkdir "%USERPROFILE%\Remote Control Server"
 
-:: Download remote_server.py directly
+:: Download remote_server.py and icon
 echo Downloading Remote Control server...
 powershell -Command "& {Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Ince88/remote/main/remote_server.py' -OutFile '%USERPROFILE%\Remote Control Server\remote_server.py'}"
+powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Ince88/remote/main/icon.ico' -OutFile '%USERPROFILE%\Remote Control Server\icon.ico'}"
 
-:: Create shortcut using a separate VBScript
+:: Create shortcut with custom icon
 echo Creating desktop shortcut...
 (
     echo Set WshShell = CreateObject^("WScript.Shell"^)
     echo strDesktop = WshShell.SpecialFolders^("Desktop"^)
     echo Set Shortcut = WshShell.CreateShortcut^(strDesktop ^& "\Remote Control Server.lnk"^)
-    echo Shortcut.TargetPath = "C:\Windows\System32\cmd.exe"
-    echo Shortcut.Arguments = "/c pythonw.exe ""%USERPROFILE%\Remote Control Server\remote_server.py"""
+    echo Shortcut.TargetPath = "%PYTHON_PATH%\python.exe"
+    echo Shortcut.Arguments = """%USERPROFILE%\Remote Control Server\remote_server.py"""
     echo Shortcut.WorkingDirectory = "%USERPROFILE%\Remote Control Server"
-    echo Shortcut.IconLocation = "%PYTHON_PATH%\pythonw.exe,0"
-    echo Shortcut.Description = "Run Remote Control Server"
+    echo Shortcut.Description = "Remote Control Server"
+    echo Shortcut.IconLocation = """%USERPROFILE%\Remote Control Server\icon.ico,0"""
     echo Shortcut.Save
 ) > "%tempDir%\createShortcut.vbs"
 
@@ -88,6 +89,10 @@ rmdir /S /Q "%tempDir%"
 echo.
 echo Setup completed successfully!
 echo A shortcut has been created on your desktop: 'Remote Control Server'
-echo Double-click it to start the server
+echo.
+echo When you first start the server:
+echo 1. Double-click the 'Remote Control Server' shortcut
+echo 2. Note the IP address shown in the window
+echo 3. Use that IP address in your phone app
 echo.
 pause 
